@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Datos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            font-family: 'Georgia', serif;
+            color: #e85a4f;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Añadir espacio entre los elementos del formulario */
+        }
+        .form-group {
+            flex: 1 1 48%;
+        }
+        .full-width {
+            flex: 1 1 100%;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        select, input[type="radio"] {
+            margin-bottom: 10px;
+        }
+        .gender-input {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        button {
+            background-color: #e85a4f;
+            color: #fff;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #d14e42;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            display: none;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¿Cuál es tu tapa favorita?</h1>
+        <img src="../imagen/bar.jpg" alt="Imagen de un bar">
+        <h2>Formulario de Datos</h2>
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="birthYear">Año de nacimiento:</label>
+                <input type="range" id="birthYear" name="birthYear" min="1900" max="2024" value="2000" oninput="document.getElementById('yearValue').textContent = this.value">
+                <span id="yearValue">2000</span>
+            </div>
+            <div class="form-group">
+                <label for="region">Comunidad Autónoma:</label>
+                <select id="region" name="region">
+                    <option value="andalucia">Andalucía</option>
+                    <option value="aragon">Aragón</option>
+                    <option value="asturias">Asturias</option>
+                    <option value="baleares">Baleares</option>
+                    <option value="canarias">Canarias</option>
+                    <option value="cantabria">Cantabria</option>
+                    <option value="castilla_la_mancha">Castilla-La Mancha</option>
+                    <option value="castilla_y_leon">Castilla y León</option>
+                    <option value="catalunya">Cataluña</option>
+                    <option value="ceuta">Ceuta</option>
+                    <option value="comunidad_valenciana">Comunidad Valenciana</option>
+                    <option value="extremadura">Extremadura</option>
+                    <option value="galicia">Galicia</option>
+                    <option value="madrid">Madrid</option>
+                    <option value="melilla">Melilla</option>
+                    <option value="murcia">Murcia</option>
+                    <option value="navarra">Navarra</option>
+                    <option value="pais_vasco">País Vasco</option>
+                    <option value="la_rioja">La Rioja</option>
+                    <option value="otro_pais">Otro país</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>Género:</label><br>
+                <div class="gender-input">
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male">Hombre</label>
+                </div>
+                <div class="gender-input">
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female">Mujer</label>
+                </div>
+            </div>
+            <div class="form-group full-width">
+                <button type="button" onclick="submitForm()">Adivina mi tapeo favorito</button>
+            </div>
+        </form>
+        <div class="result" id="result">
+            <!-- Aquí se mostrará el resultado -->
+        </div>
+    </div>
+
+    <script>
+        function submitForm() {
+            // Aquí iría la llamada al modelo de ML y la lógica para mostrar el resultado
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').textContent = 'Aquí se mostrará tu tapeo favorito según el modelo ML.';
+        }
+    </script>
+</body>
+</html>
