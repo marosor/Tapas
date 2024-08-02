@@ -8,7 +8,9 @@ Tanto el dataset como el modelo han sido creados exprofeso para esta entrega, au
 
 ### Archivos del Trabajo
 
-1. **Dataset:** Los datos del dataset son inventados.
-2. **Modelo:** Modelo de clasificación
+1. **Dataset:** Fichero .csv de +mil entradas, con datos inventados, más un excel a modo de diccionario de códigos (de tapas, bebidas y CCAA).
+2. **Modelo:** Jupyter notebook con el código del Modelo de clasificación, más el mejor modelo entreado en Pickle
+3. **HTML:** Código html para que el usuario interactúe con el formulario desde un navegador
+4. **Portada:** Imagen de portada
 
 **Integrantes del grupo**: Emmanuel Collado, María Fernández, Pepe Reina y Marcela Rosemberg
