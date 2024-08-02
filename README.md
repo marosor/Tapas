@@ -11,4 +11,4 @@ Tanto el dataset como el modelo han sido creados exprofeso para esta entrega, au
 1. **Dataset:** Los datos del dataset son inventados.
 2. **Modelo:** Modelo de clasificación
 
-**Integrantes del grupo**, formado por: Emmanuel Collado, María Fernández, Pepe Reina y Marcela Rosemberg
+**Integrantes del grupo**: Emmanuel Collado, María Fernández, Pepe Reina y Marcela Rosemberg
