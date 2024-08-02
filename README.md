@@ -4,7 +4,7 @@
 
 ## TAPAS Y BEBIDAS
 
-En este repositorio presentamos el último team challenger para el bootcamp de big data.  
-Tanto el dataset como el modelo han sido creados exprofeso para esta entrega. Realmente no es la parte principal; es el despliegue de este lo que tiene peso en este repositorio.
+En este repositorio presentamos el último Team Challenge para el bootcamp de Data Science.  
+Tanto el dataset como el modelo han sido creados exprofeso para esta entrega, aunque el elemento central de este proyecto es el despliegue de dicho modelo.
 
-> Los datos del dataset son inventados.
+Los datos del dataset son inventados.
