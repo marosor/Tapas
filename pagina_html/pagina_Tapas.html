@@ -11,6 +11,7 @@
             color: #333;
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Evita el scroll cuando el popup está visible */
         }
         .container {
             max-width: 800px;
@@ -19,6 +20,12 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            filter: blur(5px); /* Hace el formulario borroso */
+            pointer-events: none; /* Evita la interacción con el formulario */
+        }
+        .container.active {
+            filter: none;
+            pointer-events: auto;
         }
         h1, h2 {
             font-family: 'Georgia', serif;
@@ -58,6 +65,9 @@
         .gender-input {
             display: inline-block;
             margin-right: 10px;
+        }
+        input[type="radio"] {
+            accent-color: #e85a4f; /* Ajustar el color del radio button */
         }
         .beverage-toggles {
             display: flex;
@@ -136,10 +146,42 @@
             border-radius: 10px;
             margin-bottom: 15px;
         }
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+        }
+        .popup-content button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="popup" id="agePopup">
+        <div class="popup-content">
+            <h2>¿Eres mayor de 18 años?</h2>
+            <button onclick="confirmAge(true)">Sí</button>
+            <button onclick="confirmAge(false)">No</button>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent">
         <h1>¿Cuál es tu tapa favorita?</h1>
         <img src="../imagen/bar.jpg" alt="Imagen de un bar">
         <h2>Formulario de Datos</h2>
@@ -242,6 +284,18 @@
     </div>
 
     <script>
+        function confirmAge(isAdult) {
+            const agePopup = document.getElementById('agePopup');
+            const mainContent = document.getElementById('mainContent');
+            if (isAdult) {
+                agePopup.style.display = 'none';
+                mainContent.classList.add('active');
+                document.body.style.overflow = 'auto'; // Permitir scroll de nuevo
+            } else {
+                alert("Este formulario solo está dirigido a mayores de edad, por la Ley 5/2018, de 3 de mayo, de prevención del consumo de alcohol en menores.");
+            }
+        }
+
         function submitForm() {
             // Aquí iría la llamada al modelo de ML y la lógica para mostrar el resultado
             document.getElementById('result').style.display = 'block';
