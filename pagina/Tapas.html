@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Datos</title>
+    <title>Predictor Tapas Favoritas</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -194,36 +194,36 @@
             <div class="form-group">
                 <label for="region">Comunidad Autónoma:</label>
                 <select id="region" name="region">
-                    <option value="andalucia">Andalucía</option>
-                    <option value="aragon">Aragón</option>
-                    <option value="asturias">Asturias</option>
-                    <option value="baleares">Baleares</option>
-                    <option value="canarias">Canarias</option>
-                    <option value="cantabria">Cantabria</option>
-                    <option value="castilla_la_mancha">Castilla-La Mancha</option>
-                    <option value="castilla_y_leon">Castilla y León</option>
-                    <option value="catalunya">Cataluña</option>
-                    <option value="ceuta">Ceuta</option>
-                    <option value="comunidad_valenciana">Comunidad Valenciana</option>
-                    <option value="extremadura">Extremadura</option>
-                    <option value="galicia">Galicia</option>
-                    <option value="madrid">Madrid</option>
-                    <option value="melilla">Melilla</option>
-                    <option value="murcia">Murcia</option>
-                    <option value="navarra">Navarra</option>
-                    <option value="pais_vasco">País Vasco</option>
-                    <option value="la_rioja">La Rioja</option>
-                    <option value="otro_pais">Otro país</option>
+                    <option value="0">Andalucía</option>
+                    <option value="1">Aragón</option>
+                    <option value="2">Asturias</option>
+                    <option value="3">Baleares</option>
+                    <option value="4">Canarias</option>
+                    <option value="5">Cantabria</option>
+                    <option value="6">Castilla-La Mancha</option>
+                    <option value="7">Castilla y León</option>
+                    <option value="8">Cataluña</option>
+                    <option value="9">Ceuta</option>
+                    <option value="10">Comunidad Valenciana</option>
+                    <option value="11">Extremadura</option>
+                    <option value="12">Galicia</option>
+                    <option value="13">Madrid</option>
+                    <option value="14">Melilla</option>
+                    <option value="15">Murcia</option>
+                    <option value="16">Navarra</option>
+                    <option value="17">País Vasco</option>
+                    <option value="18">La Rioja</option>
+                    <option value="19">Otro país</option>
                 </select>
             </div>
             <div class="form-group full-width">
                 <label>Género:</label><br>
                 <div class="gender-input">
-                    <input type="radio" id="male" name="gender" value="male">
+                    <input type="radio" id="male" name="gender" value="0">
                     <label for="male">Hombre</label>
                 </div>
                 <div class="gender-input">
-                    <input type="radio" id="female" name="gender" value="female">
+                    <input type="radio" id="female" name="gender" value="1">
                     <label for="female">Mujer</label>
                 </div>
             </div>
@@ -233,73 +233,99 @@
                     <label class="beverage-label">
                         <span>Cerveza</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="cerveza">
+                            <input type="radio" name="beverage" value="0">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
                         <span>Refresco</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="refresco">
+                            <input type="radio" name="beverage" value="1">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
                         <span>Vermut</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="vermut">
+                            <input type="radio" name="beverage" value="2">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
                         <span>Vino blanco</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="vino_blanco">
+                            <input type="radio" name="beverage" value="3">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
-                        <span>Vino tinto</span>
+                        <span>Vino blanco</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="vino_tinto">
-                            <span class="slider"></span>
-                        </label>
-                    </label>
-                    <label class="beverage-label">
-                        <span>Otros</span>
-                        <label class="toggle">
-                            <input type="radio" name="beverage" value="otros">
+                            <input type="radio" name="beverage" value="3">
                             <span class="slider"></span>
                         </label>
                     </label>
                 </div>
             </div>
-            <div class="form-group full-width">
-                <button type="button" onclick="submitForm()">Adivina mi tapeo favorito</button>
-            </div>
+            <button type="button" onclick="submitForm()">Enviar</button>
         </form>
-        <div class="result" id="result">
-            <!-- Aquí se mostrará el resultado -->
+        <div class="result" id="resultContainer">
+            <h2>Resultado</h2>
+            <p id="resultText"></p>
         </div>
     </div>
 
     <script>
+        // Función para manejar la confirmación de edad
         function confirmAge(isAdult) {
-            const agePopup = document.getElementById('agePopup');
-            const mainContent = document.getElementById('mainContent');
             if (isAdult) {
-                agePopup.style.display = 'none';
-                mainContent.classList.add('active');
-                document.body.style.overflow = 'auto'; // Permitir scroll de nuevo
+                document.getElementById('agePopup').style.display = 'none';
+                document.getElementById('mainContent').classList.add('active');
             } else {
-                alert("Este formulario solo está dirigido a mayores de edad, por la Ley 5/2018, de 3 de mayo, de prevención del consumo de alcohol en menores.");
+                alert('Debes ser mayor de 18 años para usar este sitio.');
+                window.location.href = 'https://www.google.com';
             }
         }
 
+        // Función para enviar el formulario a la API
         function submitForm() {
-            // Aquí iría la llamada al modelo de ML y la lógica para mostrar el resultado
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('result').textContent = 'Aquí se mostrará tu tapeo favorito según el modelo ML.';
+            // Obtener los valores del formulario
+            const birthYear = document.getElementById('birthYear').value;
+            const region = document.getElementById('region').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const beverage = document.querySelector('input[name="beverage"]:checked').value;
+
+            // Crear un objeto con los datos
+            const data = {
+                birth_year: parseInt(birthYear),
+                region: parseInt(region),
+                gender: parseInt(gender),
+                beverage: parseInt(beverage)
+            };
+
+            // Enviar los datos a la API usando fetch
+            fetch('http://127.0.0.1:5000/api/v1/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log(result); // Para ver el contenido de la respuesta
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('resultText').innerText = `Tapa recomendada: ${result.prediction}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
+            });
         }
     </script>
 </body>
