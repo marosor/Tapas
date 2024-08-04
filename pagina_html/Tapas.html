@@ -284,13 +284,15 @@
     <script>
         // Función para manejar la confirmación de edad
         function confirmAge(isAdult) {
-            if (isAdult) {
-                document.getElementById('agePopup').style.display = 'none';
-                document.getElementById('mainContent').classList.add('active');
-            } else {
-                alert('Debes ser mayor de 18 años para usar este sitio.');
-                window.location.href = 'https://www.google.com';
-            }
+        const agePopup = document.getElementById('agePopup');
+        const mainContent = document.getElementById('mainContent');
+        if (isAdult) {
+            agePopup.style.display = 'none';
+            mainContent.classList.add('active');
+            document.body.style.overflow = 'auto';
+        } else {
+            alert("Este formulario solo está dirigido a mayores de edad, por la Ley 5/2018, de 3 de mayo, de prevención del consumo de alcohol en menores.");
+        }
         }
 
         // Función para enviar el formulario a la API

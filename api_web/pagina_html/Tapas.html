@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor Tapas Favoritas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            filter: blur(5px); /* Hace el formulario borroso */
+            pointer-events: none; /* Evita la interacción con el formulario */
+        }
+        .container.active {
+            filter: none;
+            pointer-events: auto;
+        }
+        h1, h2 {
+            font-family: 'Georgia', serif;
+            color: #e85a4f;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Añadir espacio entre los elementos del formulario */
+        }
+        .form-group {
+            flex: 1 1 48%;
+        }
+        .full-width {
+            flex: 1 1 100%;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #e85a4f; /* Ajustar el color del deslizante */
+        }
+        select, input[type="radio"] {
+            margin-bottom: 10px;
+        }
+        .gender-input {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        input[type="radio"] {
+            accent-color: #e85a4f; /* Ajustar el color del radio button */
+        }
+        .beverage-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #e85a4f;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .beverage-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        button {
+            background-color: #e85a4f;
+            color: #fff;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #d14e42;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            display: none;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+        }
+        .popup-content button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup" id="agePopup">
+        <div class="popup-content">
+            <h2>¿Eres mayor de 18 años?</h2>
+            <button onclick="confirmAge(true)">Sí</button>
+            <button onclick="confirmAge(false)">No</button>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent">
+        <h1>¿Cuál es tu tapa favorita?</h1>
+        <img src="../imagen/bar.jpg" alt="Imagen de un bar">
+        <h2>Formulario de Datos</h2>
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="birthYear">Año de nacimiento:</label>
+                <input type="range" id="birthYear" name="birthYear" min="1900" max="2024" value="2000" oninput="document.getElementById('yearValue').textContent = this.value">
+                <span id="yearValue">2000</span>
+            </div>
+            <div class="form-group">
+                <label for="region">Comunidad Autónoma:</label>
+                <select id="region" name="region">
+                    <option value="1">Andalucía</option>
+                    <option value="2">Aragón</option>
+                    <option value="3">Asturias</option>
+                    <option value="4">Baleares</option>
+                    <option value="5">Canarias</option>
+                    <option value="6">Cantabria</option>
+                    <option value="7">Castilla y León</option>
+                    <option value="8">Castilla-La Mancha</option>
+                    <option value="9">Cataluña</option>
+                    <option value="10">Ceuta</option>
+                    <option value="11">C. Valenciana</option>
+                    <option value="12">Extremadura</option>
+                    <option value="13">Galicia</option>
+                    <option value="14">Madrid</option>
+                    <option value="15">Melilla</option>
+                    <option value="16">Murcia</option>
+                    <option value="17">Navarra</option>
+                    <option value="18">País Vasco</option>
+                    <option value="19">La Rioja</option>
+                    <option value="20">Fuera</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>Género:</label><br>
+                <div class="gender-input">
+                    <input type="radio" id="male" name="gender" value="1">
+                    <label for="male">Hombre</label>
+                </div>
+                <div class="gender-input">
+                    <input type="radio" id="female" name="gender" value="2">
+                    <label for="female">Mujer</label>
+                </div>
+            </div>
+            <div class="form-group full-width">
+                <label>Bebida:</label><br>
+                <div class="beverage-toggles">
+                    <label class="beverage-label">
+                        <span>Cerveza</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="1">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Refresco</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="2">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Vermut</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="3">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Vino blanco</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="4">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Vino tinto</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="5">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Otros</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="6">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+            </div>
+            <button type="button" onclick="submitForm()">Enviar</button>
+        </form>
+        <div class="result" id="resultContainer">
+            <h2>Resultado</h2>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <script>
+        // Función para manejar la confirmación de edad
+        function confirmAge(isAdult) {
+            if (isAdult) {
+                document.getElementById('agePopup').style.display = 'none';
+                document.getElementById('mainContent').classList.add('active');
+            } else {
+                alert('Debes ser mayor de 18 años para usar este sitio.');
+                window.location.href = 'https://www.google.com';
+            }
+        }
+
+        // Función para enviar el formulario a la API
+        function submitForm() {
+            // Obtener los valores del formulario
+            const birthYear = document.getElementById('birthYear').value;
+            const region = document.getElementById('region').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const beverage = document.querySelector('input[name="beverage"]:checked').value;
+
+            const data = {
+                anio: birthYear,
+                comunidad: region,
+                genero: gender,
+                bebida: beverage
+            };
+
+            // Enviar los datos a la API usando fetch
+            fetch('https://emmaco.pythonanywhere.com/api/v1/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log(result); // Para ver el contenido de la respuesta
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('resultText').innerText = `Tapa recomendada: ${result.prediction}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
+            });
+        }
+    </script>
+</body>
+</html>
