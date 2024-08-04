@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import numpy as np
 import pandas as pd
 import os
@@ -13,56 +13,38 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 import pickle
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
+app = Flask(__name__, 
+            template_folder=os.path.join(os.path.dirname(__file__), '..', 'pagina_html'), 
+            static_folder=os.path.join(os.path.dirname(__file__), '..', 'imagen'))
 
 # Enruta la landing page (endpoint /)
-@app.route("/", methods=["GET"])
-def hello():
-    return "Bienvenido a la API de Tapas"
+@app.route("/")
+def home():
+    return render_template("Tapas.html")
 
 # Enruta la función al endpoint /api/v1/predict
-@app.route("/api/v1/predict", methods=["GET"])
+@app.route("/api/v1/predict", methods=["POST"])
 def predict():
-    try:
-        # Cargar el modelo entrenado
-        model_path = '../modelo_entrenado/encurtidos.pkl'
-        if not os.path.exists(model_path):
-            return jsonify({'error': 'Modelo no encontrado.'}), 404
+    data = request.json
+    model_path = os.path.join(os.path.dirname(__file__),'..' ,'modelo_entrenado', 'encurtidos.pkl')
+    model = pickle.load(open(model_path, 'rb'))
 
-        model = pickle.load(open(model_path, 'rb'))
+    anio = data.get('anio', 0)
+    comunidad = data.get('comunidad', 0)
+    genero = data.get('genero', 0)
+    bebida = data.get('bebida', 0)
 
-        # Obtener los parámetros de la solicitud
-        anio = request.args.get('anio')
-        comunidad = request.args.get('comunidad')
-        genero = request.args.get('genero')
-        bebida = request.args.get('bebida')
-
-        # Validar que los parámetros no estén vacíos
-        if not all([anio, comunidad, genero, bebida]):
-            return jsonify({'error': 'Faltan parámetros para la predicción.'}), 400
-
-        # Convertir los parámetros a tipo int
-        try:
-            anio = int(anio)
-            comunidad = int(comunidad)
-            genero = int(genero)
-            bebida = int(bebida)
-        except ValueError:
-            return jsonify({'error': 'Los parámetros deben ser números enteros.'}), 400
-
-        # Realizar la predicción
-        prediction = model.predict([[anio, comunidad, genero, bebida]])
+    if anio is None or comunidad is None or genero is None or bebida is None:
+        return jsonify({"error": "Datos insuficientes para predecir."}), 400
+    else:
+        prediction = model.predict([[int(anio), int(comunidad), int(genero), int(bebida)]])
         return jsonify({'prediction': int(prediction[0])})
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 # Enruta la función al endpoint /api/v1/retrain
 @app.route("/api/v1/retrain", methods=["GET"])
 def retrain():
     try:
-        data_path = "../datos/df_desordenado_new.csv"
+        data_path = "../datos/df_reentreno_desordenado.csv"
         if os.path.exists(data_path):
             df = pd.read_csv(data_path)
 
@@ -73,53 +55,16 @@ def retrain():
 
             pipeline = Pipeline([
                 ('scaler', StandardScaler()),  # Escalado de características
-                ('clf', RandomForestClassifier(random_state=42))  # Clasificador
+                ('clf', GradientBoostingClassifier(random_state=42))  # Clasificador
             ])
 
             param_grid = [
                 {
-                    'clf': [RandomForestClassifier(random_state=42)],
-                    'clf__n_estimators': [50, 100, 200],
-                    'clf__max_depth': [None, 10, 20, 30],
-                    'clf__min_samples_split': [2, 5, 10],
-                    'clf__min_samples_leaf': [1, 2, 4]
-                },
-                {
-                    'clf': [GradientBoostingClassifier(random_state=42)],
-                    'clf__n_estimators': [50, 100, 200],
-                    'clf__learning_rate': [0.01, 0.1, 0.2],
-                    'clf__max_depth': [3, 5, 7],
-                    'clf__min_samples_split': [2, 5, 10],
-                    'clf__min_samples_leaf': [1, 2, 4]
-                },
-                {
-                    'clf': [SVC()],
-                    'clf__C': [0.1, 1, 10],
-                    'clf__kernel': ['linear', 'rbf'],
-                    'clf__gamma': ['scale', 'auto']
-                },
-                {
-                    'clf': [KNeighborsClassifier()],
-                    'clf__n_neighbors': [3, 5, 7],
-                    'clf__weights': ['uniform', 'distance']
-                },
-                {
-                    'clf': [LogisticRegression(max_iter=10000)],
-                    'clf__C': [0.1, 1, 10],
-                    'clf__solver': ['lbfgs', 'liblinear']
-                },
-                {
-                    'clf': [XGBClassifier(eval_metric='mlogloss')],
-                    'clf__n_estimators': [50, 100, 200],
-                    'clf__learning_rate': [0.01, 0.1, 0.2],
-                    'clf__max_depth': [3, 5, 7],
-                    'clf__subsample': [0.8, 1.0]
-                },
-                {
-                    'clf': [LGBMClassifier()],
-                    'clf__n_estimators': [50, 100, 200],
-                    'clf__learning_rate': [0.01, 0.1, 0.2],
-                    'clf__max_depth': [-1, 10, 20]
+                    'clf__n_estimators': [100],
+                    'clf__learning_rate': [0.2],
+                    'clf__max_depth': [7],
+                    'clf__min_samples_split': [5],
+                    'clf__min_samples_leaf': [1]
                 }
             ]
 
@@ -142,4 +87,4 @@ def retrain():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

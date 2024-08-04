@@ -11,7 +11,6 @@
             color: #333;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Evita el scroll cuando el popup está visible */
         }
         .container {
             max-width: 800px;
@@ -194,36 +193,36 @@
             <div class="form-group">
                 <label for="region">Comunidad Autónoma:</label>
                 <select id="region" name="region">
-                    <option value="0">Andalucía</option>
-                    <option value="1">Aragón</option>
-                    <option value="2">Asturias</option>
-                    <option value="3">Baleares</option>
-                    <option value="4">Canarias</option>
-                    <option value="5">Cantabria</option>
-                    <option value="6">Castilla-La Mancha</option>
+                    <option value="1">Andalucía</option>
+                    <option value="2">Aragón</option>
+                    <option value="3">Asturias</option>
+                    <option value="4">Baleares</option>
+                    <option value="5">Canarias</option>
+                    <option value="6">Cantabria</option>
                     <option value="7">Castilla y León</option>
-                    <option value="8">Cataluña</option>
-                    <option value="9">Ceuta</option>
-                    <option value="10">Comunidad Valenciana</option>
-                    <option value="11">Extremadura</option>
-                    <option value="12">Galicia</option>
-                    <option value="13">Madrid</option>
-                    <option value="14">Melilla</option>
-                    <option value="15">Murcia</option>
-                    <option value="16">Navarra</option>
-                    <option value="17">País Vasco</option>
-                    <option value="18">La Rioja</option>
-                    <option value="19">Otro país</option>
+                    <option value="8">Castilla-La Mancha</option>
+                    <option value="9">Cataluña</option>
+                    <option value="10">Ceuta</option>
+                    <option value="11">Comunidad Valenciana</option>
+                    <option value="12">Extremadura</option>
+                    <option value="13">Galicia</option>
+                    <option value="14">Madrid</option>
+                    <option value="15">Melilla</option>
+                    <option value="16">Murcia</option>
+                    <option value="17">Navarra</option>
+                    <option value="18">País Vasco</option>
+                    <option value="19">La Rioja</option>
+                    <option value="20">Otro país</option>
                 </select>
             </div>
             <div class="form-group full-width">
                 <label>Género:</label><br>
                 <div class="gender-input">
-                    <input type="radio" id="male" name="gender" value="0">
+                    <input type="radio" id="male" name="gender" value="1">
                     <label for="male">Hombre</label>
                 </div>
                 <div class="gender-input">
-                    <input type="radio" id="female" name="gender" value="1">
+                    <input type="radio" id="female" name="gender" value="2">
                     <label for="female">Mujer</label>
                 </div>
             </div>
@@ -233,27 +232,20 @@
                     <label class="beverage-label">
                         <span>Cerveza</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="0">
+                            <input type="radio" name="beverage" value="1">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
                         <span>Refresco</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="1">
+                            <input type="radio" name="beverage" value="2">
                             <span class="slider"></span>
                         </label>
                     </label>
                     <label class="beverage-label">
                         <span>Vermut</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="2">
-                            <span class="slider"></span>
-                        </label>
-                    </label>
-                    <label class="beverage-label">
-                        <span>Vino blanco</span>
-                        <label class="toggle">
                             <input type="radio" name="beverage" value="3">
                             <span class="slider"></span>
                         </label>
@@ -261,7 +253,21 @@
                     <label class="beverage-label">
                         <span>Vino blanco</span>
                         <label class="toggle">
-                            <input type="radio" name="beverage" value="3">
+                            <input type="radio" name="beverage" value="4">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Vino tinto</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="5">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                    <label class="beverage-label">
+                        <span>Otros</span>
+                        <label class="toggle">
+                            <input type="radio" name="beverage" value="6">
                             <span class="slider"></span>
                         </label>
                     </label>
@@ -295,12 +301,11 @@
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const beverage = document.querySelector('input[name="beverage"]:checked').value;
 
-            // Crear un objeto con los datos
             const data = {
-                birth_year: parseInt(birthYear),
-                region: parseInt(region),
-                gender: parseInt(gender),
-                beverage: parseInt(beverage)
+                anio: birthYear,
+                comunidad: region,
+                genero: gender,
+                bebida: beverage
             };
 
             // Enviar los datos a la API usando fetch
