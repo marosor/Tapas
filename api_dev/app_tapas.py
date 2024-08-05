@@ -5,12 +5,7 @@ import os
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 import pickle
 
 app = Flask(__name__, 
@@ -53,31 +48,28 @@ def retrain():
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+            # Creación del pipeline con un modelo de GradientBoostingClassifier
             pipeline = Pipeline([
                 ('scaler', StandardScaler()),  # Escalado de características
-                ('clf', GradientBoostingClassifier(random_state=42))  # Clasificador
+                ('clf', GradientBoostingClassifier(
+                    n_estimators=100,
+                    learning_rate=0.2,
+                    max_depth=7,
+                    min_samples_split=5,
+                    min_samples_leaf=1,
+                    random_state=42
+                ))  # Clasificador
             ])
 
-            param_grid = [
-                {
-                    'clf__n_estimators': [100],
-                    'clf__learning_rate': [0.2],
-                    'clf__max_depth': [7],
-                    'clf__min_samples_split': [5],
-                    'clf__min_samples_leaf': [1]
-                }
-            ]
+            # Entrenamiento del modelo
+            pipeline.fit(X_train, y_train)
 
-            grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1, verbose=2)
+            # Evaluación del modelo
+            accuracy = pipeline.score(X_test, y_test)
 
-            grid_search.fit(X_train, y_train)
-
-            best_model = grid_search.best_estimator_
-            accuracy = best_model.score(X_test, y_test)
-
-            # Guardar el mejor modelo entrenado
+            # Guardar el modelo entrenado
             with open('../modelo_entrenado/encurtidos.pkl', 'wb') as file:
-                pickle.dump(best_model, file)
+                pickle.dump(pipeline, file)
 
             return f"Modelo reentrenado. Precisión: {accuracy:.4f}"
         else:
