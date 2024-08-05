@@ -51,29 +51,23 @@ def retrain():
 
             pipeline = Pipeline([
                 ('scaler', StandardScaler()),  # Escalado de características
-                ('clf', GradientBoostingClassifier(random_state=42))  # Clasificador
+                ('clf', GradientBoostingClassifier(n_estimators=100,
+                    learning_rate=0.2,
+                    max_depth=7,
+                    min_samples_split=5,
+                    min_samples_leaf=1,
+                    random_state=42))  # Clasificador
             ])
 
-            param_grid = [
-                {
-                    'clf__n_estimators': [100],
-                    'clf__learning_rate': [0.2],
-                    'clf__max_depth': [7],
-                    'clf__min_samples_split': [5],
-                    'clf__min_samples_leaf': [1]
-                }
-            ]
+            # Entrenamiento del modelo
+            pipeline.fit(X_train, y_train)
 
-            grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1, verbose=2)
-
-            grid_search.fit(X_train, y_train)
-
-            best_model = grid_search.best_estimator_
-            accuracy = best_model.score(X_test, y_test)
+            # Evaluación del modelo
+            accuracy = pipeline.score(X_test, y_test)
 
             # Guardar el mejor modelo entrenado
             with open(root_path + 'encurtidos.pkl', 'wb') as file:
-                pickle.dump(best_model, file)
+                pickle.dump(pipeline, file)
 
             return f"Modelo reentrenado. Precisión: {accuracy:.4f}"
         else:
