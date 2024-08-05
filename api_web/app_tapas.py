@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 import pandas as pd
 import os
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import GradientBoostingClassifier
@@ -66,7 +66,7 @@ def retrain():
             accuracy = pipeline.score(X_test, y_test)
 
             # Guardar el mejor modelo entrenado
-            with open(root_path + 'encurtidos.pkl', 'wb') as file:
+            with open(root_path + 'r_encurtidos.pkl', 'wb') as file:
                 pickle.dump(pipeline, file)
 
             return f"Modelo reentrenado. Precisión: {accuracy:.4f}"
