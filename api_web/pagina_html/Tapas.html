@@ -119,6 +119,11 @@
             gap: 5px;
             font-size: 0.9em;
         }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
         button {
             background-color: #e85a4f;
             color: #fff;
@@ -138,6 +143,9 @@
             background-color: #f1f1f1;
             border-radius: 10px;
             display: none;
+        }
+        .result b {
+            color: #e85a4f;
         }
         img {
             max-width: 100%;
@@ -212,7 +220,7 @@
                     <option value="17">Navarra</option>
                     <option value="18">País Vasco</option>
                     <option value="19">La Rioja</option>
-                    <option value="20">Otro País</option>
+                    <option value="20">Otro país</option>
                 </select>
             </div>
             <div class="form-group full-width">
@@ -273,19 +281,42 @@
                     </label>
                 </div>
             </div>
-            <button type="button" onclick="submitForm()">Enviar</button>
+            <div class="button-container">
+                <button type="button" onclick="submitForm()">Predecir</button>
+                <button type="button" onclick="retrainModel()">Reentrenar</button>
+            </div>
         </form>
         <div class="result" id="resultContainer">
             <h2>Resultado</h2>
             <p id="resultText"></p>
+            <img id="resultImage" src="" alt="Imagen de la tapa">
         </div>
     </div>
 
     <script>
+        // Diccionario de tapas
+        const tapasDict = {
+            1: 'berenjena con miel',
+            2: 'caracoles',
+            3: 'chacina',
+            4: 'champiñon plancha',
+            5: 'chipirón plancha',
+            6: 'croquetas',
+            7: 'encurtidos/aceitunas',
+            8: 'ensaladilla rusa',
+            9: 'guisos tradicionales',
+            10: 'montaito/serranito',
+            11: 'oreja',
+            12: 'patatas bravas',
+            13: 'pescado frito',
+            14: 'torreznos/chicharrones',
+            15: 'tortilla patatas'
+        };
+
         // Función para manejar la confirmación de edad
         function confirmAge(isAdult) {
-        const agePopup = document.getElementById('agePopup');
-        const mainContent = document.getElementById('mainContent');
+            const agePopup = document.getElementById('agePopup');
+            const mainContent = document.getElementById('mainContent');
             if (isAdult) {
                 agePopup.style.display = 'none';
                 mainContent.classList.add('active');
@@ -312,11 +343,11 @@
 
             // Enviar los datos a la API usando fetch
             fetch('https://emmaco.pythonanywhere.com/api/v1/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             })
             .then(response => {
                 if (!response.ok) {
@@ -326,13 +357,21 @@
             })
             .then(result => {
                 console.log(result); // Para ver el contenido de la respuesta
+                const tapaName = tapasDict[result.prediction];
+                const tapaImage = `../imagen/${tapaName.replace(/ /g, '_')}.jpg`;
                 document.getElementById('resultContainer').style.display = 'block';
-                document.getElementById('resultText').innerText = `Tapa recomendada: ${result.prediction}`;
+                document.getElementById('resultText').innerHTML = `Para ti, una tapita de <b>${tapaName}</b>`;
+                document.getElementById('resultImage').src = tapaImage;
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
             });
+        }
+
+        // Función para reentrenar el modelo
+        function retrainModel() {
+            alert("Funcionalidad de reentrenamiento en desarrollo.");
         }
     </script>
 </body>
