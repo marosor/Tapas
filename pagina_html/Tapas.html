@@ -348,7 +348,7 @@ function submitForm() {
     };
 
     // Enviar los datos a la API usando fetch
-    fetch('https://emmaco.pythonanywhere.com/api/v1/predict', {
+    fetch('http://127.0.0.1:5000/api/v1/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -421,7 +421,7 @@ function retrainModel() {
     const buttonContainer = document.getElementById('resultContainer').querySelector('.button-container');
     buttonContainer.innerHTML = '<button id="predictButton" type="button" onclick="restartPrediction()" disabled style="opacity: 0.5;">Predecir</button>';
 
-    fetch('https://emmaco.pythonanywhere.com//api/v1/retrain', {
+    fetch('http://127.0.0.1:5000/api/v1/retrain', {
         method: 'GET'
     })
     .then(response => {

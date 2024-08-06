@@ -71,7 +71,7 @@ def retrain():
             with open('../modelo_entrenado/encurtidos.pkl', 'wb') as file:
                 pickle.dump(pipeline, file)
 
-            return f"Modelo reentrenado. Precisión: {accuracy:.4f}"
+            return f"{accuracy:.4f}"
         else:
             return "<h2>New data for retrain NOT FOUND. Nothing done!</h2>", 404
 
