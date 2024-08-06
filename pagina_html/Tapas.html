@@ -368,7 +368,7 @@
             .then(result => {
                 const tapaName = tapasDict[result.prediction];
                 const tapaImage = `../imagen/${tapaName.replace(/ /g, '_')}.jpg`;
-                
+
                 // Ocultar el formulario y mostrar los resultados
                 document.getElementById('dataForm').style.display = 'none';
                 document.getElementById('mainHeader').classList.add('hidden');
@@ -384,7 +384,7 @@
                 alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
             });
         }
-        
+
         // Función para reentrenar el modelo
         function retrainModel() {
             // Mostrar mensaje de reentrenamiento y deshabilitar el botón de Predecir
@@ -443,11 +443,11 @@
                 }
             }, 500);
         }
-        
+
         // Función para restablecer la predicción
         function restartPrediction() {
             document.getElementById('dataForm').reset();
-            document.getElementById('dataForm').style.display = 'block';
+            document.getElementById('dataForm').style.display = 'flex';
             document.getElementById('resultContainer').style.display = 'none';
             document.getElementById('resultImage').style.display = 'none';
             document.getElementById('mainHeader').classList.remove('hidden');
