@@ -178,6 +178,10 @@
             margin-top: 10px;
             margin-right: 10px;
         }
+        .resultcolor {
+            color: #e85a4f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -288,7 +292,7 @@
             </div>
         </form>
         <div class="result" id="resultContainer">
-            <p id="predictionText"><b id="predictedTapa"></b></p>
+            <p class="resultcolor" id="predictionText"><b id="predictedTapa"></b></p>
             <img id="resultImage" src="" alt="Imagen de la tapa predicha" style="display: none;">
             <div class="button-container">
                 <button id="predictButton" type="button" onclick="restartPrediction()">Realizar Otra Predicción</button>
@@ -331,128 +335,126 @@
         }
 
         // Función para enviar el formulario a la API
-function submitForm() {
-    event.preventDefault(); // Prevenir que el formulario se envíe de forma predeterminada
-
-    // Obtener los valores del formulario
-    const birthYear = document.getElementById('birthYear').value;
-    const region = document.getElementById('region').value;
-    const gender = document.querySelector('input[name="gender"]:checked').value;
-    const beverage = document.querySelector('input[name="beverage"]:checked').value;
-
-    const data = {
-        anio: birthYear,
-        comunidad: region,
-        genero: gender,
-        bebida: beverage
-    };
-
-    // Enviar los datos a la API usando fetch
-    fetch('https://emmaco.pythonanywhere.com/api/v1/predict', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(result => {
-        const tapaName = tapasDict[result.prediction];
-        const tapaImage = `../imagen/${tapaName.replace(/ /g, '_')}.jpg`;
+        function submitForm(event) {
+            event.preventDefault(); // Prevenir que el formulario se envíe de forma predeterminada
         
-        // Ocultar el formulario y mostrar los resultados
-        document.getElementById('dataForm').style.display = 'none';
-        document.getElementById('resultContainer').style.display = 'block';
-        document.getElementById('predictionText').innerHTML = `Para ti, una tapita de: <b id="predictedTapa">${tapaName}</b>`;
-        document.getElementById('resultImage').src = tapaImage;
-        document.getElementById('resultImage').style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
-    });
-}
-
+            // Obtener los valores del formulario
+            const birthYear = document.getElementById('birthYear').value;
+            const region = document.getElementById('region').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const beverage = document.querySelector('input[name="beverage"]:checked').value;
+        
+            const data = {
+                anio: birthYear,
+                comunidad: region,
+                genero: gender,
+                bebida: beverage
+            };
+        
+            // Enviar los datos a la API usando fetch
+            fetch('https://emmaco.pythonanywhere.com/api/v1/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                const tapaName = tapasDict[result.prediction];
+                const tapaImage = `../imagen/${tapaName.replace(/ /g, '_')}.jpg`;
+                
+                // Ocultar el formulario y mostrar los resultados
+                document.getElementById('dataForm').style.display = 'none';
+                document.getElementById('mainHeader').classList.add('hidden');
+                document.getElementById('mainImage').classList.add('hidden');
+                document.getElementById('formHeader').classList.add('hidden');
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('predictionText').innerHTML = `Para ti, una tapita de: <b style="color:black" id="predictedTapa">${tapaName}</      b>`;
+                document.getElementById('resultImage').src = tapaImage;
+                document.getElementById('resultImage').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al enviar los datos. Por favor, intenta nuevamente.');
+            });
+        }
+        
+        // Función para reentrenar el modelo
+        function retrainModel() {
+            // Mostrar mensaje de reentrenamiento y deshabilitar el botón de Predecir
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('mainImage').classList.add('hidden');
+            document.getElementById('formHeader').classList.add('hidden');
+            document.getElementById('dataForm').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+            document.getElementById('predictionText').textContent = "Reentrenando";
+            document.getElementById('resultImage').style.display = 'none';
+        
+            // Mostrar barra de progreso clara y definida
+            const progressBar = document.createElement('div');
+            progressBar.id = 'progressBar';
+            progressBar.style.width = '100%';
+            progressBar.style.height = '20px';
+            progressBar.style.backgroundColor = '#ccc';
+            progressBar.style.borderRadius = '10px';
+            progressBar.innerHTML = '<div id="progressBarFill" style="width: 0%; height: 100%; background-color: #e85a4f; border-radius: 10px;"></div>';
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.insertBefore(progressBar, resultContainer.querySelector('.button-container'));
+        
+            // Cambiar el botón para que diga "Predecir" y deshabilitarlo
+            const buttonContainer = document.getElementById('resultContainer').querySelector('.button-container');
+            buttonContainer.innerHTML = '<button id="predictButton" type="button" onclick="restartPrediction()" disabled style="opacity: 0.5;">Predecir</       button>';
+            
+            fetch('https://emmaco.pythonanywhere.com/api/v1/retrain', {
+                method: 'GET'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(result => {
+                // Ocultar barra de progreso y habilitar botón de Predecir
+                document.getElementById('progressBar').remove();
+                document.getElementById('predictButton').disabled = false;
+                document.getElementById('predictButton').style.opacity = '1';
+                document.getElementById('predictionText').textContent = `Reentrenamiento completado. Precisión: ${result}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al reentrenar el modelo. Por favor, intenta nuevamente.');
+            });
+        
+            // Simulación de progreso de la barra (para fines de demostración)
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                } else {
+                    progress += 10;
+                    document.getElementById('progressBarFill').style.width = progress + '%';
+                }
+            }, 500);
+        }
+        
+        // Función para restablecer la predicción
         function restartPrediction() {
-            // Restablecer el formulario a los valores por defecto
             document.getElementById('dataForm').reset();
-            document.getElementById('birthYear').value = 2000;
-            document.getElementById('yearValue').textContent = 2000;
-
-            // Mostrar el formulario y ocultar el resultado
-            document.getElementById('dataForm').style.display = 'flex';
+            document.getElementById('dataForm').style.display = 'block';
             document.getElementById('resultContainer').style.display = 'none';
             document.getElementById('resultImage').style.display = 'none';
-
-            // Mostrar la imagen de portada y el encabezado del formulario
             document.getElementById('mainHeader').classList.remove('hidden');
             document.getElementById('mainImage').classList.remove('hidden');
             document.getElementById('formHeader').classList.remove('hidden');
+            document.getElementById('yearValue').textContent = '2000'; // Restablecer el valor del año
         }
-
-        // Función para reentrenar el modelo
-function retrainModel() {
-    // Mostrar mensaje de reentrenamiento y deshabilitar el botón de Predecir
-    document.getElementById('mainHeader').classList.add('hidden');
-    document.getElementById('mainImage').classList.add('hidden');
-    document.getElementById('formHeader').classList.add('hidden');
-    document.getElementById('dataForm').style.display = 'none';
-    document.getElementById('resultContainer').style.display = 'block';
-    document.getElementById('predictedTapa').textContent = "Reentrenando";
-    document.getElementById('resultImage').style.display = 'none';
-
-    // Mostrar barra de progreso clara y definida
-    const progressBar = document.createElement('div');
-    progressBar.id = 'progressBar';
-    progressBar.style.width = '100%';
-    progressBar.style.height = '20px';
-    progressBar.style.backgroundColor = '#ccc';
-    progressBar.style.borderRadius = '10px';
-    progressBar.innerHTML = '<div id="progressBarFill" style="width: 0%; height: 100%; background-color: #e85a4f; border-radius: 10px;"></div>';
-    const resultContainer = document.getElementById('resultContainer');
-    resultContainer.insertBefore(progressBar, resultContainer.querySelector('.button-container'));
-
-    // Cambiar el botón para que diga "Predecir" y deshabilitarlo
-    const buttonContainer = document.getElementById('resultContainer').querySelector('.button-container');
-    buttonContainer.innerHTML = '<button id="predictButton" type="button" onclick="restartPrediction()" disabled style="opacity: 0.5;">Predecir</button>';
-
-    fetch('https://emmaco.pythonanywhere.com//api/v1/retrain', {
-        method: 'GET'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(result => {
-        // Ocultar barra de progreso y habilitar botón de Predecir
-        document.getElementById('progressBar').remove();
-        document.getElementById('predictButton').disabled = false;
-        document.getElementById('predictButton').style.opacity = '1';
-        document.getElementById('predictedTapa').textContent = `Reentrenamiento completado. Precisión: ${result}`;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Ocurrió un error al reentrenar el modelo. Por favor, intenta nuevamente.');
-    });
-
-    // Simulación de progreso de la barra (para fines de demostración)
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-        if (progress >= 100) {
-            clearInterval(progressInterval);
-        } else {
-            progress += 10;
-            document.getElementById('progressBarFill').style.width = progress + '%';
-        }
-    }, 500);
-}
     </script>
 </body>
 </html>
