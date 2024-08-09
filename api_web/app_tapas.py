@@ -22,7 +22,7 @@ def home():
 @app.route("/api/v1/predict", methods=["POST"])
 def predict():
     data = request.json
-    model_path = os.path.join(os.path.dirname(__file__), root_path, 'encurtidos.pkl')
+    model_path = os.path.join(os.path.dirname(__file__), root_path, 'r_encurtidos.pkl')
     model = pickle.load(open(model_path, 'rb'))
 
     anio = data.get('anio', 0)
@@ -47,7 +47,7 @@ def retrain():
             X = df[['Año de nacimiento', 'Comunidad', 'Género', 'Bebida']]
             y = df['Tapa']
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=45)
 
             pipeline = Pipeline([
                 ('scaler', StandardScaler()),  # Escalado de características
@@ -56,7 +56,7 @@ def retrain():
                     max_depth=7,
                     min_samples_split=5,
                     min_samples_leaf=1,
-                    random_state=42))  # Clasificador
+                    random_state=40))  # Clasificador
             ])
 
             # Entrenamiento del modelo
